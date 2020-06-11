@@ -1,0 +1,105 @@
+---
+title: "my-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(blblm)
+library(furrr)
+```
+
+## Introduction: Blblm Package
+The blblm package is a package designed to compute linear regression and logistic regression for bag of little bootstraps with the option of parallelization. Bag of little bootstraps is a computationally efficient algorithm that incorporates bootstrap and subsampling. Instead of sampling $b$ from $b$ which is characteristic of bootstrap, a sample of size $n$ from $b$ with replacement takes place. Bag of little bootstraps, or blb, is best to use if you want to use more than one core for computation and large sets of data.
+
+### Functions
+We have two .R files which provide us with parallelization and logistic regression. The first file, blblm.R, provides the user with the option for parallelization and computes the bag of little bootstraps for linear regression. The second file, logistic_regression.R, provides the user with the option for parallelization and computes the bag of little bootstraps for logistic regression.
+
+1. **blblm.R**
+
+      * `blblm(formula, data, m = 10, B = 5000, parallel = FALSE)` 
+is the main function which fits a linear regression model using bag of little bootstraps where formula is a linear regression model, data, $m$ is the number of subsamples and B is the number of bootstrap samples. The user can indicate whether they want to use parallelization or not. If `parallel = FALSE` blblm will not use parallelization and implement `map` to compute everything. If `parallel = TRUE` blblm will use parallelization and implement `future_map` to compute everything which is under `library(furrr)`. When parallelization is implemented, the user will run `plan(multisession, workers = 4)` where the user can indicate any number of workers they wish to use. This is more efficient since it reads data dynamically. The function outputs a list of estimates and the formula.
+
+```{r}
+# Fit of blblm
+fit <- blblm(mpg ~ wt * hp, data = mtcars, m = 3, B = 100, parallel = FALSE)
+fit
+coef(fit)
+```
+
+The following functions play a part in the main function.
+      
+      * `split_data <- function(data, m){...}` 
+splits the data into $m$ subsamples and assumes data is in the main process when there is no parallelization.
+      
+      * `lm_each_subsample <- function(formula, data, n, B){...}`
+repeats the function `lm_each_boot` B times where it takes the following parameters: 
+      formula - a linear regression formula 
+      data - dataframe
+      n - sample size
+      B - number of bootstrap samples
+      
+      * `lm_each_boot <- function(formula, data, n){...}` 
+is bootstrap for subsample. It calculates the `freqs` for each bootstrap sample which is needed when doing bootstrap. This function runs the following  function `lm`. It takes the following parameters:
+      formula - a linear regression formula 
+      data - dataframe
+      n - sample size
+      
+      * `lm1 <- function(formula, data, freqs){...}`
+runs the lm function one time. Since it reads a formula, it is important to change the closure or it will pick up the wrong variable from the global scope which is why we run this line `environment(formula) <- environment()` in the function. It uses the weights argument for fit, which is the linear regression model. We want to extract the coefficients and error standard deviation/variance from fit. It takes the following parameters:
+      formula - a linear regression formula 
+      data - dataframe
+      freqs - weights
+      
+      * `blbcoef <- function(fit){...}` 
+takes the linear regression fit model as an argument and extracts the coefficients using `coef(fit)`.
+      
+      * `blbsigma <- function(fit){...}` 
+takes the linear regression fit model and extracts the standard deviation of the residuals/errors. However, since we use weights as an argument in our lm() function, we calculate the sigma variance based on the formula for linear regression.
+      
+      * `print.blblm <- function(x, ...){...}` 
+prints the result of the blblm function under class blblm. An example is shown below. It takes argument x which is an object. In addition, running fit[[1]][[1]] where the first part is a large list of 100 elements since B = 100, and the second part is a bootstrap of coefficients of subsample 1, gives you the result below. It also provides sigma for each of the elements.
+      
+```{r}
+# Print blblm
+fit <- blblm(mpg ~ wt * hp, data = mtcars, m = 3, B = 100, parallel = TRUE)
+fit
+
+head(fit[[1]][[1]])
+```
+
+      * `sigma.blblm <- function(object, confidence = FALSE, level = 0.95, ...){...}`
+      `coef.blblm <- function(object, ...){...}` 
+      `confint.blblm <- function(object, parm = NULL, level = 0.95, ...) {...}`
+      `predict.blblm <- function(object, new_data, confidence = FALSE, level = 0.95, ...)` 
+All four functions use S3 which is a way to do polymorphism. Each function writes a sigma, coefficient, confindence interval, and predict function for blblm respectively. The parameters include:
+      object - fitted model object
+      confidence - a logical value indicating if the confidence interval should be constructed for the respective parameter
+      level - the level of confidence to use for the confidence interval
+      parm - indicates the parameters you want to construct a confidence interval for
+      
+      
+2. **logistic_regression.R**
+
+      * `blblog(formula, data, m = 10, B = 5000, parallel = FALSE)`
+is the main function which fits a logistic regression model using bag of little bootstraps where formula is a logistic regression model, data, $m$ is the number of subsamples and B is the number of bootstrap samples. This is useful since it enables you to not only rely on linear regression models. The user can indicate whether they want to use parallelization or not. If `parallel = FALSE` blblog will not use parallelization and implement `map` to compute everything. If `parallel = TRUE` blblog will use parallelization and implement `future_map` to compute everything. When parallelization is implemented, the user will run `plan(multisession, workers = 4)` where the user can indicate any number of workers they wish to use. This is more efficient since it reads data dynamically. The function outputs a list of estimates and the formula. The following functions play a part in the main function.
+      
+      * All of the functions are the same as the ones mentioned in blblm.R. However, their names are changed to indicate logistic regression such as blblog instead of blblm. In addition, all `lm()` functions are changed to `glm()` for logistic regression. For example, `fit <- glm(formula, family = binomial, data, weights = freqs, maxit = 100)` which is within the `glm1` function is changed from `lm()` to `glm()` and contains the parameter `family = binomial` for logistic regression. It also contains a parameter `maxit = 100` which stands for the maximum amount of iterations. We use this in order to ensure the bootstrap sample converges. Within the `glm1` function we write a while loop which continues for the length of B as long as fit does not converge and checks if the fit converges or not. If it doesn't converge we discard the freqs or bootstrap sample and try another set.  
+      
+```{r, warning = FALSE}
+#blblog
+fit1 <- blblog(am ~ mpg + cyl, data = mtcars, m = 3, B = 100, parallel = TRUE)
+fit1
+
+coef(fit1)
+```

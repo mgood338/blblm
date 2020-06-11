@@ -1,18 +1,29 @@
 Package: blblm
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Computes Bag of Little Bootstraps For Linear and Logistic Regression
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Authors@R: person("Megan", "Goodson", email = "magoodson@ucdavis.edu", role = c("aut", "cre"))
+Maintainer: The package maintainer <magoodson@ucdavis.edu>
+Description: Uses the bag of little bootstraps algorithm to compute the
+    the linear regression and logistic regression model. It is more computationally efficient since
+    it uses both bootstrap and subsampling. It splits the data, computes the
+    estimates, computes the regression estimates for a bag of little bootstraps 
+    dataset, along with computing the coefficient, sigma, and confidence intervals
+    for the fit.
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown,
+    blblm,
 Imports: 
     purrr,
+    furrr,
+    utils,
     magrittr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
+VignetteBuilder: knitr

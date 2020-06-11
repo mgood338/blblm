@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>my-vignette</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">my-vignette</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(blblm)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(furrr)</span></code></pre></div>
+<div id="introduction-blblm-package" class="section level2">
+<h2>Introduction: Blblm Package</h2>
+<p>The blblm package is a package designed to compute linear regression and logistic regression for bag of little bootstraps with the option of parallelization. Bag of little bootstraps is a computationally efficient algorithm that incorporates bootstrap and subsampling. Instead of sampling <span class="math inline">\(b\)</span> from <span class="math inline">\(b\)</span> which is characteristic of bootstrap, a sample of size <span class="math inline">\(n\)</span> from <span class="math inline">\(b\)</span> with replacement takes place. Bag of little bootstraps, or blb, is best to use if you want to use more than one core for computation and large sets of data.</p>
+<div id="functions" class="section level3">
+<h3>Functions</h3>
+<p>We have two .R files which provide us with parallelization and logistic regression. The first file, blblm.R, provides the user with the option for parallelization and computes the bag of little bootstraps for linear regression. The second file, logistic_regression.R, provides the user with the option for parallelization and computes the bag of little bootstraps for logistic regression.</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>blblm.R</strong></p>
+<ul>
+<li><code>blblm(formula, data, m = 10, B = 5000, parallel = FALSE)</code> is the main function which fits a linear regression model using bag of little bootstraps where formula is a linear regression model, data, <span class="math inline">\(m\)</span> is the number of subsamples and B is the number of bootstrap samples. The user can indicate whether they want to use parallelization or not. If <code>parallel = FALSE</code> blblm will not use parallelization and implement <code>map</code> to compute everything. If <code>parallel = TRUE</code> blblm will use parallelization and implement <code>future_map</code> to compute everything which is under <code>library(furrr)</code>. When parallelization is implemented, the user will run <code>plan(multisession, workers = 4)</code> where the user can indicate any number of workers they wish to use. This is more efficient since it reads data dynamically. The function outputs a list of estimates and the formula.</li>
+</ul></li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Fit of blblm</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>fit &lt;-<span class="st"> </span><span class="kw">blblm</span>(mpg <span class="op">~</span><span class="st"> </span>wt <span class="op">*</span><span class="st"> </span>hp, <span class="dt">data =</span> mtcars, <span class="dt">m =</span> <span class="dv">3</span>, <span class="dt">B =</span> <span class="dv">100</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>fit</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; blblm model: mpg ~ wt * hp</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">coef</span>(fit)</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#&gt; 44.36416221 -6.30525648 </span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; -0.09585485  0.01891445</span></span></code></pre></div>
+<p>The following functions play a part in the main function.</p>
+<pre><code>  * `split_data &lt;- function(data, m){...}` </code></pre>
+<p>splits the data into <span class="math inline">\(m\)</span> subsamples and assumes data is in the main process when there is no parallelization.</p>
+<pre><code>  * `lm_each_subsample &lt;- function(formula, data, n, B){...}`</code></pre>
+<p>repeats the function <code>lm_each_boot</code> B times where it takes the following parameters: formula - a linear regression formula data - dataframe n - sample size B - number of bootstrap samples</p>
+<pre><code>  * `lm_each_boot &lt;- function(formula, data, n){...}` </code></pre>
+<p>is bootstrap for subsample. It calculates the <code>freqs</code> for each bootstrap sample which is needed when doing bootstrap. This function runs the following function <code>lm</code>. It takes the following parameters: formula - a linear regression formula data - dataframe n - sample size</p>
+<pre><code>  * `lm1 &lt;- function(formula, data, freqs){...}`</code></pre>
+<p>runs the lm function one time. Since it reads a formula, it is important to change the closure or it will pick up the wrong variable from the global scope which is why we run this line <code>environment(formula) &lt;- environment()</code> in the function. It uses the weights argument for fit, which is the linear regression model. We want to extract the coefficients and error standard deviation/variance from fit. It takes the following parameters: formula - a linear regression formula data - dataframe freqs - weights</p>
+<pre><code>  * `blbcoef &lt;- function(fit){...}` </code></pre>
+<p>takes the linear regression fit model as an argument and extracts the coefficients using <code>coef(fit)</code>.</p>
+<pre><code>  * `blbsigma &lt;- function(fit){...}` </code></pre>
+<p>takes the linear regression fit model and extracts the standard deviation of the residuals/errors. However, since we use weights as an argument in our lm() function, we calculate the sigma variance based on the formula for linear regression.</p>
+<pre><code>  * `print.blblm &lt;- function(x, ...){...}` </code></pre>
+<p>prints the result of the blblm function under class blblm. An example is shown below. It takes argument x which is an object. In addition, running fit[[1]][[1]] where the first part is a large list of 100 elements since B = 100, and the second part is a bootstrap of coefficients of subsample 1, gives you the result below. It also provides sigma for each of the elements.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Print blblm</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>fit &lt;-<span class="st"> </span><span class="kw">blblm</span>(mpg <span class="op">~</span><span class="st"> </span>wt <span class="op">*</span><span class="st"> </span>hp, <span class="dt">data =</span> mtcars, <span class="dt">m =</span> <span class="dv">3</span>, <span class="dt">B =</span> <span class="dv">100</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a>fit</span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt; blblm model: mpg ~ wt * hp</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="kw">head</span>(fit[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt; [[1]]$coef</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co">#&gt; 47.72350386 -7.96524825 </span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co">#&gt; -0.08979949  0.02148257 </span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co">#&gt; </span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">#&gt; [[1]]$sigma</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">#&gt; [1] 1.641052</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="co">#&gt; </span></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co">#&gt; </span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co">#&gt; [[2]]$coef</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="co">#&gt; 53.42730196 -9.22024006 </span></span>
+<span id="cb10-22"><a href="#cb10-22"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb10-23"><a href="#cb10-23"></a><span class="co">#&gt; -0.13500858  0.03109496 </span></span>
+<span id="cb10-24"><a href="#cb10-24"></a><span class="co">#&gt; </span></span>
+<span id="cb10-25"><a href="#cb10-25"></a><span class="co">#&gt; [[2]]$sigma</span></span>
+<span id="cb10-26"><a href="#cb10-26"></a><span class="co">#&gt; [1] 2.012</span></span>
+<span id="cb10-27"><a href="#cb10-27"></a><span class="co">#&gt; </span></span>
+<span id="cb10-28"><a href="#cb10-28"></a><span class="co">#&gt; </span></span>
+<span id="cb10-29"><a href="#cb10-29"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb10-30"><a href="#cb10-30"></a><span class="co">#&gt; [[3]]$coef</span></span>
+<span id="cb10-31"><a href="#cb10-31"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb10-32"><a href="#cb10-32"></a><span class="co">#&gt; 45.99229518 -6.70120332 </span></span>
+<span id="cb10-33"><a href="#cb10-33"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb10-34"><a href="#cb10-34"></a><span class="co">#&gt; -0.09150826  0.01769216 </span></span>
+<span id="cb10-35"><a href="#cb10-35"></a><span class="co">#&gt; </span></span>
+<span id="cb10-36"><a href="#cb10-36"></a><span class="co">#&gt; [[3]]$sigma</span></span>
+<span id="cb10-37"><a href="#cb10-37"></a><span class="co">#&gt; [1] 1.993693</span></span>
+<span id="cb10-38"><a href="#cb10-38"></a><span class="co">#&gt; </span></span>
+<span id="cb10-39"><a href="#cb10-39"></a><span class="co">#&gt; </span></span>
+<span id="cb10-40"><a href="#cb10-40"></a><span class="co">#&gt; [[4]]</span></span>
+<span id="cb10-41"><a href="#cb10-41"></a><span class="co">#&gt; [[4]]$coef</span></span>
+<span id="cb10-42"><a href="#cb10-42"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb10-43"><a href="#cb10-43"></a><span class="co">#&gt; 47.24773042 -7.46345152 </span></span>
+<span id="cb10-44"><a href="#cb10-44"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb10-45"><a href="#cb10-45"></a><span class="co">#&gt; -0.10019825  0.02155917 </span></span>
+<span id="cb10-46"><a href="#cb10-46"></a><span class="co">#&gt; </span></span>
+<span id="cb10-47"><a href="#cb10-47"></a><span class="co">#&gt; [[4]]$sigma</span></span>
+<span id="cb10-48"><a href="#cb10-48"></a><span class="co">#&gt; [1] 2.026032</span></span>
+<span id="cb10-49"><a href="#cb10-49"></a><span class="co">#&gt; </span></span>
+<span id="cb10-50"><a href="#cb10-50"></a><span class="co">#&gt; </span></span>
+<span id="cb10-51"><a href="#cb10-51"></a><span class="co">#&gt; [[5]]</span></span>
+<span id="cb10-52"><a href="#cb10-52"></a><span class="co">#&gt; [[5]]$coef</span></span>
+<span id="cb10-53"><a href="#cb10-53"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb10-54"><a href="#cb10-54"></a><span class="co">#&gt; 42.48997667 -5.56766194 </span></span>
+<span id="cb10-55"><a href="#cb10-55"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb10-56"><a href="#cb10-56"></a><span class="co">#&gt; -0.08239209  0.01426663 </span></span>
+<span id="cb10-57"><a href="#cb10-57"></a><span class="co">#&gt; </span></span>
+<span id="cb10-58"><a href="#cb10-58"></a><span class="co">#&gt; [[5]]$sigma</span></span>
+<span id="cb10-59"><a href="#cb10-59"></a><span class="co">#&gt; [1] 1.900856</span></span>
+<span id="cb10-60"><a href="#cb10-60"></a><span class="co">#&gt; </span></span>
+<span id="cb10-61"><a href="#cb10-61"></a><span class="co">#&gt; </span></span>
+<span id="cb10-62"><a href="#cb10-62"></a><span class="co">#&gt; [[6]]</span></span>
+<span id="cb10-63"><a href="#cb10-63"></a><span class="co">#&gt; [[6]]$coef</span></span>
+<span id="cb10-64"><a href="#cb10-64"></a><span class="co">#&gt; (Intercept)          wt </span></span>
+<span id="cb10-65"><a href="#cb10-65"></a><span class="co">#&gt; 44.85724291 -6.36367169 </span></span>
+<span id="cb10-66"><a href="#cb10-66"></a><span class="co">#&gt;          hp       wt:hp </span></span>
+<span id="cb10-67"><a href="#cb10-67"></a><span class="co">#&gt; -0.08980779  0.01678643 </span></span>
+<span id="cb10-68"><a href="#cb10-68"></a><span class="co">#&gt; </span></span>
+<span id="cb10-69"><a href="#cb10-69"></a><span class="co">#&gt; [[6]]$sigma</span></span>
+<span id="cb10-70"><a href="#cb10-70"></a><span class="co">#&gt; [1] 2.080629</span></span></code></pre></div>
+<pre><code>  * `sigma.blblm &lt;- function(object, confidence = FALSE, level = 0.95, ...){...}`
+  `coef.blblm &lt;- function(object, ...){...}` 
+  `confint.blblm &lt;- function(object, parm = NULL, level = 0.95, ...) {...}`
+  `predict.blblm &lt;- function(object, new_data, confidence = FALSE, level = 0.95, ...)` </code></pre>
+<p>All four functions use S3 which is a way to do polymorphism. Each function writes a sigma, coefficient, confindence interval, and predict function for blblm respectively. The parameters include: object - fitted model object confidence - a logical value indicating if the confidence interval should be constructed for the respective parameter level - the level of confidence to use for the confidence interval parm - indicates the parameters you want to construct a confidence interval for</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p><strong>logistic_regression.R</strong></p>
+<ul>
+<li><p><code>blblog(formula, data, m = 10, B = 5000, parallel = FALSE)</code> is the main function which fits a logistic regression model using bag of little bootstraps where formula is a logistic regression model, data, <span class="math inline">\(m\)</span> is the number of subsamples and B is the number of bootstrap samples. This is useful since it enables you to not only rely on linear regression models. The user can indicate whether they want to use parallelization or not. If <code>parallel = FALSE</code> blblog will not use parallelization and implement <code>map</code> to compute everything. If <code>parallel = TRUE</code> blblog will use parallelization and implement <code>future_map</code> to compute everything. When parallelization is implemented, the user will run <code>plan(multisession, workers = 4)</code> where the user can indicate any number of workers they wish to use. This is more efficient since it reads data dynamically. The function outputs a list of estimates and the formula. The following functions play a part in the main function.</p></li>
+<li><p>All of the functions are the same as the ones mentioned in blblm.R. However, their names are changed to indicate logistic regression such as blblog instead of blblm. In addition, all <code>lm()</code> functions are changed to <code>glm()</code> for logistic regression. For example, <code>fit &lt;- glm(formula, family = binomial, data, weights = freqs, maxit = 100)</code> which is within the <code>glm1</code> function is changed from <code>lm()</code> to <code>glm()</code> and contains the parameter <code>family = binomial</code> for logistic regression. It also contains a parameter <code>maxit = 100</code> which stands for the maximum amount of iterations. We use this in order to ensure the bootstrap sample converges. Within the <code>glm1</code> function we write a while loop which continues for the length of B as long as fit does not converge and checks if the fit converges or not. If it doesn’t converge we discard the freqs or bootstrap sample and try another set.</p></li>
+</ul></li>
+</ol>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">#blblog</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>fit1 &lt;-<span class="st"> </span><span class="kw">blblog</span>(am <span class="op">~</span><span class="st"> </span>mpg <span class="op">+</span><span class="st"> </span>cyl, <span class="dt">data =</span> mtcars, <span class="dt">m =</span> <span class="dv">3</span>, <span class="dt">B =</span> <span class="dv">100</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a>fit1</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; blblog model: am ~ mpg + cyl</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="kw">coef</span>(fit1)</span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt; (Intercept)         mpg </span></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="co">#&gt;  36.4600914   0.4680487 </span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="co">#&gt;         cyl </span></span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="co">#&gt;  -9.8264876</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
